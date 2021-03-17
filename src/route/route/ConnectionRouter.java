@@ -19,8 +19,8 @@ public class ConnectionRouter {
 	final Circuit circuit;
 	
 	private float pres_fac;					// set how much overuse gets punished
-	private final float initial_pres_fac = 1f;
-	private final float pres_fac_mult = 3; 	// multiply pres_fac each iteration with this factor
+	private final float initial_pres_fac = 0.5f;
+	private final float pres_fac_mult = 2; 	// multiply pres_fac each iteration with this factor
 	private final float acc_fac = 1;		// set how much more overuse contributes to acc cost each iteration
 	private float alphaWLD = 1.4f; 	// weight factor for 	wire length delay 	in cost calculation
 	private float alphaTD = 0.7f;	// weight factor for 	timing delay 		in cost calculation
@@ -277,7 +277,7 @@ public class ConnectionRouter {
 
 				} else if (con.congested()) {
 					this.routeTimers.rerouteCongestion.start();
-					con.SetBoundingBoxRange(con.boundingBoxRange + 1);
+					//con.SetBoundingBoxRange(con.boundingBoxRange + 1);
 					this.routeConnection(con);
 					this.routeTimers.rerouteCongestion.finish();
 					
@@ -626,7 +626,7 @@ public class ConnectionRouter {
 			
 			//CHANX OR CHANY
 			if (child.isWire) {
-				if (con.isInConBoundingBoxLimit(child)) {
+				if (con.isInNetBoundingBoxLimit(child)) {
 					this.addNodeToQueue(node, child, con);
 				}
 			
