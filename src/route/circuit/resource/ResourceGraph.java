@@ -395,6 +395,7 @@ public class ResourceGraph {
         		int numChildren = Integer.parseInt(words[1]);
         		for(int index = 0; index < numChildren; index++) {
         			RouteNode child = this.routeNodes.get(Integer.parseInt(words[index+2]));
+        			child.parents.add(parent);
         			parent.setChild(index, child);
         		}
         	}

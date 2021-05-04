@@ -1,5 +1,8 @@
 package route.circuit.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import route.route.RouteNodeData;
 
 public abstract class RouteNode implements Comparable<RouteNode> {
@@ -24,7 +27,7 @@ public abstract class RouteNode implements Comparable<RouteNode> {
 	
 	public final int numChildren;
 	public final RouteNode[] children;
-	//public final RouteNode[] parents;
+	public final List<RouteNode> parents;
 	public final RouteSwitch[] switches;
 
 	public final IndexedData indexedData;
@@ -73,6 +76,7 @@ public abstract class RouteNode implements Comparable<RouteNode> {
 		this.numChildren = numChildren;
 		this.children = new RouteNode[this.numChildren];
 		this.switches = new RouteSwitch[this.numChildren];
+		this.parents = new ArrayList<>();
 
 		this.target = false;
 	}

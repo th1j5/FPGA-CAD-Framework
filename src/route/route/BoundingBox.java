@@ -205,6 +205,9 @@ class CongestedZone extends BoundingBox {
 				// if not yet used AND is congested
 				addNodeToQueue(child, nodesTouched, q);
 			}
+			for (RouteNode parent: node.parents) {
+			    addNodeToQueue(parent, nodesTouched, q);
+			}
 			i++;
 		}
 		// Clean up
