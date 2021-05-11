@@ -115,7 +115,7 @@ public class RouteVisualiser {
         this.routePanel = new RoutePanel(this.logger);
         pane.add(this.routePanel);
         
-        this.drawRouting(this.routings.size() - 1);       
+        this.drawRouting(this.routings.size() - 3);       
         
     }
     
@@ -125,11 +125,23 @@ public class RouteVisualiser {
     	Routing routing = this.routings.get(index);
     	
     	this.routingLabel.setText("Iteration ".concat(Integer.toString(index)));
-    	this.routePanel.setRouting(this.routings.get(index)); //if not work, routing -> this.placements.get(index) 
+    	this.routePanel.setRouting(this.routings.get(index));
     }
     
     void navigate(int type, int step) {
-    	//navigate and draw
+    	int numRoutings = this.routings.size();
+    	int currentIndex = this.currentRouting;
+    	
+    	this.drawRouting(this.addStep(currentIndex, step, numRoutings));
+    }
+    
+    // calculate what iteration to show after x steps (loops back)
+    int addStep(int currentIndex, int step, int numRoutings) {
+    	int newIndex = (currentIndex + step) % numRoutings;
+    	if (newIndex < 0) {
+    		newIndex += numRoutings;
+    	}
+    	return newIndex;
     }
     
     void drawMouseInfo(boolean mouseEnabled) {

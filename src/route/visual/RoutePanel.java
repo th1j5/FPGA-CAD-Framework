@@ -68,7 +68,6 @@ public class RoutePanel extends JPanel {
     	
     	if (this.routing != null) {
     		if (!this.plotEnabled) {
-    			System.out.println("PAINTING!");
     			this.setDimensions();
     			//this.drawGrid(g); //too distracting
     			this.drawWires(g);
@@ -154,7 +153,6 @@ public class RoutePanel extends JPanel {
     }
     
     private void drawWires(Graphics g) {
-    	System.out.println(this.routing.getWires().get(0));
     	for (RouteNode wireEntry : this.routing.getWires()) {
     		this.drawWire(wireEntry, g, routing.getMaxCongestion());
     	}
