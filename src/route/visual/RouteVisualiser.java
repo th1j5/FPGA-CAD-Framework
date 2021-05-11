@@ -51,9 +51,9 @@ public class RouteVisualiser {
     	}
     }
     
-    public void addRouting(int iteration, List<RouteNode> routeNodeList) {
+    public void addRouting(int iteration, List<RouteNode> routeNodeList, int maxCongestion) {
     	if (this.enabled) {
-    		this.routings.add(new Routing(iteration, this.circuit, routeNodeList));
+    		this.routings.add(new Routing(iteration, this.circuit, routeNodeList, maxCongestion));
     	}
     }
     
@@ -115,7 +115,7 @@ public class RouteVisualiser {
         this.routePanel = new RoutePanel(this.logger);
         pane.add(this.routePanel);
         
-        this.drawRouting(this.routings.size() - 1);       
+        this.drawRouting(this.routings.size() - 4);       
         
     }
     
@@ -125,7 +125,7 @@ public class RouteVisualiser {
     	Routing routing = this.routings.get(index);
     	
     	this.routingLabel.setText("Iteration ".concat(Integer.toString(index)));
-    	this.routePanel.setRouting(routing); //if not work, routing -> this.placements.get(index) 
+    	this.routePanel.setRouting(this.routings.get(index)); //if not work, routing -> this.placements.get(index) 
     }
     
     void navigate(int type, int step) {

@@ -56,7 +56,7 @@ public class ConnectionRouter {
 	private RouteTimers routeTimers;
 	
 	public static enum CongestionLookAheadMethod {NONE, GROW_WHEN_CONGESTED, CLOSE_TO_BORDER, HOTSPOT_DETECTION}; // Different modes of congestion lookahead
-	public static final CongestionLookAheadMethod CONGESTION_LOOK_AHEAD_METHOD = CongestionLookAheadMethod.CLOSE_TO_BORDER;
+	public static final CongestionLookAheadMethod CONGESTION_LOOK_AHEAD_METHOD = CongestionLookAheadMethod.GROW_WHEN_CONGESTED;
 
 	public static final boolean DEBUG = true;
 	

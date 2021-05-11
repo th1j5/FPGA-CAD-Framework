@@ -544,12 +544,17 @@ public class ResourceGraph {
 	public void addRoutingToVisualiser(int iteration, RouteVisualiser visualiser) {
 		//TEST if visualiser is on!
 		List<RouteNode> wires = new ArrayList<>();
+		int maxCongestion = 0;
 		for (RouteNode routeNode : this.routeNodes) {
 			if (routeNode.isWire && routeNode.used()) {
+				int occupation = routeNode.routeNodeData.occupation;
+				if (occupation > maxCongestion) {
+					maxCongestion = occupation;
+				}
 				wires.add(routeNode);
 			}
 		}
-		visualiser.addRouting(iteration, wires);
+		visualiser.addRouting(iteration, wires, maxCongestion);
 	}
 	
 	public int wireSegmentsUsed() {

@@ -33,13 +33,13 @@ public class RoutePanel extends JPanel {
     
     private transient Routing routing;
     
+    
     private int blockSize;
     private int circuitWidth;
     private int circuitHeight;
     private int left, top, right, bottom;
     
     private boolean mouseEnabled = false, plotEnabled = false;
-    //bbCost?
     
     RoutePanel(Logger logger) {
     	this.logger = logger;
@@ -47,6 +47,7 @@ public class RoutePanel extends JPanel {
     
     void setRouting(Routing routing) {
     	this.routing = routing;
+    	System.out.println(this.routing.getWires().size());
     	circuitWidth = this.routing.getWidth();
     	circuitHeight = this.routing.getHeight();
     	
@@ -69,9 +70,8 @@ public class RoutePanel extends JPanel {
     	if (this.routing != null) {
     		if (!this.plotEnabled) {
     			this.setDimensions();
-    			this.drawGrid(g);
+    			//this.drawGrid(g); //too distracting
     			this.drawWires(g);
-    			this.drawLine(g, this.left, this.bottom, this.right, this.top);
     			//if (this.mouseEnabled)this.drawBlockInformation(g);
     		} else {
     			this.drawPlot(g);
@@ -154,23 +154,42 @@ public class RoutePanel extends JPanel {
     }
     
     private void drawWires(Graphics g) {
-    	System.out.println(this.routing.getWires().get(0));
     	for (RouteNode wireEntry : this.routing.getWires()) {
-    		this.drawWire(wireEntry, g);
+    		this.drawWire(wireEntry, g, routing.getMaxCongestion());
     	}
     }
     
-    private void drawWire(RouteNode wire, Graphics g) {
+    private void drawWire(RouteNode wire, Graphics g, int maxCongestion) {
+    	int congestion = wire.routeNodeData.occupation;
+    	
+    	if (congestion > 1) {
+    		System.out.println(congestion);
+    	}
+    	
+    	Color congestionColour;
+    	if (maxCongestion > 1) {
+    		// sometimes happens that a wire of usage 0 slips in somehow, draw invisible wire
+    		if (congestion == 0) {
+    			congestionColour = new Color(0,0,0,0);
+    		} else {
+    			// factor should be mapped to 0..255 (low congestion..high congestion)
+    			int colourRedFactor = (int)Math.floor((congestion-1)/(maxCongestion-1)*255);
+        		congestionColour = new Color(colourRedFactor, 255-colourRedFactor, 50);
+    		}
+    	// if maxCongestion is 1, would get division by 0, just use green.
+    	} else {
+    		congestionColour = new Color(0,255,50);
+    	}
+    	
+    	g.setColor(congestionColour);
+    	
     	int xlength = this.right - this.left;
     	int ylength = this.top - this.bottom;
     	double x1 = this.left + wire.xlow*xlength/this.circuitWidth;
     	double x2 = this.left + wire.xhigh*xlength/this.circuitWidth;
     	double y1 = this.bottom + wire.ylow*ylength/this.circuitHeight;
     	double y2 = this.bottom + wire.yhigh*ylength/this.circuitHeight;
-    	System.out.println(this.right);
-    	System.out.println("\n");
-    	System.out.println(x2);
-    	System.out.println("\n");
+
     	this.drawLine(g, x1, y1, x2, y2);
     }
     
