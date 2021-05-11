@@ -153,17 +153,13 @@ public class RoutePanel extends JPanel {
     }
     
     private void drawWires(Graphics g) {
-    	for (RouteNode wireEntry : this.routing.getWires()) {
+    	for (Wire wireEntry : this.routing.getWires()) {
     		this.drawWire(wireEntry, g, routing.getMaxCongestion());
     	}
     }
     
-    private void drawWire(RouteNode wire, Graphics g, int maxCongestion) {
-    	int congestion = wire.routeNodeData.occupation;
-    	
-    	if (congestion > 1) {
-    		System.out.println(congestion);
-    	}
+    private void drawWire(Wire wire, Graphics g, int maxCongestion) {
+    	int congestion = wire.getOccupation();
     	
     	Color congestionColour;
     	if (maxCongestion > 1) {
@@ -184,10 +180,10 @@ public class RoutePanel extends JPanel {
     	
     	int xlength = this.right - this.left;
     	int ylength = this.top - this.bottom;
-    	double x1 = this.left + wire.xlow*xlength/this.circuitWidth;
-    	double x2 = this.left + wire.xhigh*xlength/this.circuitWidth;
-    	double y1 = this.bottom + wire.ylow*ylength/this.circuitHeight;
-    	double y2 = this.bottom + wire.yhigh*ylength/this.circuitHeight;
+    	double x1 = this.left + wire.getX1()*xlength/this.circuitWidth;
+    	double x2 = this.left + wire.getX2()*xlength/this.circuitWidth;
+    	double y1 = this.bottom + wire.getY1()*ylength/this.circuitHeight;
+    	double y2 = this.bottom + wire.getY2()*ylength/this.circuitHeight;
 
     	this.drawLine(g, x1, y1, x2, y2);
     }

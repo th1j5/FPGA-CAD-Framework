@@ -51,9 +51,9 @@ public class RouteVisualiser {
     	}
     }
     
-    public void addRouting(int iteration, List<RouteNode> routeNodeList, int maxCongestion) {
+    public void addRouting(int iteration, List<Wire> wires, int maxCongestion) {
     	if (this.enabled) {
-    		this.routings.add(new Routing(iteration, this.circuit, routeNodeList, maxCongestion));
+    		this.routings.add(new Routing(iteration, this.circuit, wires, maxCongestion));
     	}
     }
     
