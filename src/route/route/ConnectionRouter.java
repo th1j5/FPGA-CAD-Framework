@@ -374,15 +374,7 @@ public class ConnectionRouter {
 							congestedRouteNodes.add(node);
 						}
 					}
-					RouteNode congestionCenter = null;
-					while (! congestedRouteNodes.isEmpty()) {
-						congestionCenter = congestedRouteNodes.first();
-						CongestedZone z = CongestedZone.findCongestionZone(congestionCenter, congestedRouteNodes); // modify in place
-						// add zone to list if not null
-						if (z != null) {
-							clusters.add(z);
-						}
-					}
+					CongestedZone.findCongestedZones(clusters, congestedRouteNodes);
 					break;
 				case GRID_DETECTION:
 					//clear zone congestion

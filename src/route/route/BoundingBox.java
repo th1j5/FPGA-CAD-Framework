@@ -162,6 +162,20 @@ class CongestedZone extends BoundingBox {
 	public CongestedZone(short x_min, short x_max, short y_min, short y_max) {
 	    super(x_min, x_max, y_min, y_max);
 	}
+	
+	public static Collection<CongestedZone> findCongestedZones(Collection<CongestedZone> clusters, SortedSet<RouteNode> congestedRouteNodes) {
+		// fill clusters, empty congestedRouteNodes
+		RouteNode congestionCenter = null;
+		while (! congestedRouteNodes.isEmpty()) {
+			congestionCenter = congestedRouteNodes.first();
+			CongestedZone z = CongestedZone.findCongestionZone(congestionCenter, congestedRouteNodes); // modify in place
+			// add zone to list if not null
+			if (z != null) {
+				clusters.add(z);
+			}
+		}
+		return clusters;
+	}
 
 	// TODO: revise this function
 	public static CongestedZone findCongestionZone(RouteNode congestionCenter, SortedSet<RouteNode> congestedRouteNodes) {
