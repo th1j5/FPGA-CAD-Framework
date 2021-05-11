@@ -34,6 +34,8 @@ public class RoutePanel extends JPanel {
     private transient Routing routing;
     
     private int blockSize;
+    private int circuitWidth;
+    private int circuitHeight;
     private int left, top, right, bottom;
     
     private boolean mouseEnabled = false, plotEnabled = false;
@@ -45,6 +47,8 @@ public class RoutePanel extends JPanel {
     
     void setRouting(Routing routing) {
     	this.routing = routing;
+    	circuitWidth = this.routing.getWidth();
+    	circuitHeight = this.routing.getHeight();
     	
     	super.repaint();
     }
@@ -67,6 +71,7 @@ public class RoutePanel extends JPanel {
     			this.setDimensions();
     			this.drawGrid(g);
     			this.drawWires(g);
+    			this.drawLine(g, this.left, this.bottom, this.right, this.top);
     			//if (this.mouseEnabled)this.drawBlockInformation(g);
     		} else {
     			this.drawPlot(g);
@@ -86,6 +91,12 @@ public class RoutePanel extends JPanel {
     	
     	//double maxbbcost = 0.0; for (double bbCost:this.bbCost){maxbbcost = Math.max(bbCost, maxbbcost);}
     	
+    	g.setColor(Color.BLACK);
+    	FontMetrics metrics = g.getFontMetrics();
+    	this.drawLine(g, left, bottom+1, right + metrics.getHeight()/2, bottom+1);
+    	this.drawLine(g, left, bottom, right + metrics.getHeight()/2, bottom);
+    	this.drawLine(g, left-1, top - metrics.getHeight()/2, left-1, bottom);
+    	this.drawLine(g, left, top - metrics.getHeight()/2, left, bottom);
     	
     }
     
@@ -143,13 +154,24 @@ public class RoutePanel extends JPanel {
     }
     
     private void drawWires(Graphics g) {
-    	//for (Map.Entry<Wires, Coordinates> wireEntry : this.routing.wires()) {
-    		//this.drawWire(wireEntry.getKey(), wireEntry.getValue(), g);
-    	//}
+    	System.out.println(this.routing.getWires().get(0));
+    	for (RouteNode wireEntry : this.routing.getWires()) {
+    		this.drawWire(wireEntry, g);
+    	}
     }
     
     private void drawWire(RouteNode wire, Graphics g) {
-    	//do the goddamn drawing you know
+    	int xlength = this.right - this.left;
+    	int ylength = this.top - this.bottom;
+    	double x1 = this.left + wire.xlow*xlength/this.circuitWidth;
+    	double x2 = this.left + wire.xhigh*xlength/this.circuitWidth;
+    	double y1 = this.bottom + wire.ylow*ylength/this.circuitHeight;
+    	double y2 = this.bottom + wire.yhigh*ylength/this.circuitHeight;
+    	System.out.println(this.right);
+    	System.out.println("\n");
+    	System.out.println(x2);
+    	System.out.println("\n");
+    	this.drawLine(g, x1, y1, x2, y2);
     }
     
     //let's just deactivate mouseComponent for a while, since it doesn't work and isn't high-priority

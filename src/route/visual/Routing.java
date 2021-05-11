@@ -14,7 +14,8 @@ class Routing {
 	private String name; //really needed?
 	private int iteration;
 	private Circuit circuit;
-	private int numWires;
+	private List<RouteNode> routeNodeList;
+	//private int numWires;
 	
 	Routing(int iteration, Circuit circuit) {
 		this.initialiseData(iteration, circuit);
@@ -24,6 +25,10 @@ class Routing {
 	
 	Routing(int iteration, Circuit circuit, List<RouteNode> routeNodeList) {
 		this.initialiseData(iteration, circuit);
+		this.routeNodeList = routeNodeList;
+		System.out.println("HEYHOI");
+		System.out.println(routeNodeList.get(0));
+		System.out.println("\n");
 	}
 	
 	//some other constructors
@@ -41,6 +46,12 @@ class Routing {
 	}
 	
 	//get numblocks?
+	public List<RouteNode> getWires() {
+		System.out.println("GEYGOI");
+		System.out.println(this.routeNodeList.get(0));
+		System.out.println("\n");
+		return this.routeNodeList;
+	}
 	
 	public int getWidth() {
 		return this.circuit.getWidth();

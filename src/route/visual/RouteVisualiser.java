@@ -64,7 +64,7 @@ public class RouteVisualiser {
             return;
         }
         
-        this.addRouting(100); //TODO: this is placeholder, probably add internal iteration counter to addRouting
+        //this.addRouting(100); //TODO: this is placeholder, probably add internal iteration counter to addRouting
         
         this.frame = new JFrame("Routing visualiser");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
