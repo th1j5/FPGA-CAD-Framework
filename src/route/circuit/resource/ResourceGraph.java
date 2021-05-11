@@ -542,6 +542,7 @@ public class ResourceGraph {
 	}
 	
 	public void addRoutingToVisualiser(int iteration, RouteVisualiser visualiser) {
+		//TEST if visualiser is on!
 		List<RouteNode> wires = new ArrayList<>();
 		for (RouteNode routeNode : this.routeNodes) {
 			if (routeNode.isWire && routeNode.used()) {

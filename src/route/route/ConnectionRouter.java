@@ -63,6 +63,7 @@ public class ConnectionRouter {
 	public ConnectionRouter(ResourceGraph rrg, Circuit circuit, RouteVisualiser visualiser) {
 		this.rrg = rrg;
 		this.circuit = circuit;
+		this.visualiser = visualiser;
 
 		this.nodesTouched = new ArrayList<>();
 		
