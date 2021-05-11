@@ -115,7 +115,7 @@ public class RouteVisualiser {
         this.routePanel = new RoutePanel(this.logger);
         pane.add(this.routePanel);
         
-        this.drawRouting(this.routings.size() - 4);       
+        this.drawRouting(this.routings.size() - 1);       
         
     }
     
