@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -556,6 +557,8 @@ public class ResourceGraph {
 				wires.add(wire);
 			}
 		}
+		//we need to sort the wires, such that the lower congested ones are on the bottom, in order to draw higher congestion later
+		Collections.sort(wires);
 		visualiser.addRouting(iteration, wires, maxCongestion);
 	}
 	

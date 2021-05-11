@@ -1,6 +1,6 @@
 package route.visual;
 
-public class Wire {
+public class Wire implements Comparable<Wire> {
     private short x1, x2, y1, y2;
     private int occupation;
 
@@ -33,5 +33,14 @@ public class Wire {
     @Override
     public String toString() {
         return String.format("(%.2f, %.2f)", this.x1, this.y1);
+    }
+    
+    //allows us to easily sort based on occupation
+    @Override
+    public int compareTo(Wire wire) {
+    	if (this.occupation == 0 || wire.occupation == 0) {
+    		return 0;
+    	}
+    	return this.occupation - wire.occupation;
     }
 }
