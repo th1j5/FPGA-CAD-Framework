@@ -14,10 +14,12 @@ import route.circuit.resource.Opin;
 import route.circuit.resource.ResourceGraph;
 import route.circuit.resource.RouteNode;
 import route.circuit.resource.RouteNodeType;
+import route.visual.RouteVisualiser;
 
 public class ConnectionRouter {
 	final ResourceGraph rrg;
 	final Circuit circuit;
+	protected RouteVisualiser visualiser;
 	
 	private float pres_fac;					// set how much overuse gets punished
 	private final float initial_pres_fac = 1f;
@@ -55,9 +57,10 @@ public class ConnectionRouter {
 	
 	public static enum CongestionLookAheadMethod {NONE, GROW_WHEN_CONGESTED, CLOSE_TO_BORDER, HOTSPOT_DETECTION}; // Different modes of congestion lookahead
 	public static final CongestionLookAheadMethod CONGESTION_LOOK_AHEAD_METHOD = CongestionLookAheadMethod.CLOSE_TO_BORDER;
+
 	public static final boolean DEBUG = true;
 	
-	public ConnectionRouter(ResourceGraph rrg, Circuit circuit) {
+	public ConnectionRouter(ResourceGraph rrg, Circuit circuit, RouteVisualiser visualiser) {
 		this.rrg = rrg;
 		this.circuit = circuit;
 
@@ -373,6 +376,8 @@ public class ConnectionRouter {
 			int wireLength = this.rrg.occupiedTotalWireLength();
 			
 			this.rrg.logCongestionHeatMap(itry);
+			
+			this.rrg.addRoutingToVisualiser(itry, this.visualiser);
 			
 			this.routeTimers.calculateStatistics.finish();
 			
