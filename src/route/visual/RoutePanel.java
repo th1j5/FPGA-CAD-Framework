@@ -38,7 +38,7 @@ public class RoutePanel extends JPanel {
     private transient Routing routing;
     
     
-    private int blockSize;
+    private int interspacing;
     private int circuitWidth;
     private int circuitHeight;
     private int left, top, right, bottom;
@@ -75,7 +75,7 @@ public class RoutePanel extends JPanel {
     			this.setDimensions();
     			this.drawGrid(g); //too distracting
     			this.drawWires(g);
-    			//if (this.mouseEnabled)this.drawBlockInformation(g);
+    			if (this.mouseEnabled)this.drawBlockInformation(g);
     		} else {
     			this.drawPlot(g);
     		}
@@ -118,16 +118,16 @@ public class RoutePanel extends JPanel {
     	int circuitWidth = this.routing.getWidth() + 1;
     	int circuitHeight = this.routing.getHeight() + 1;
     	
-    	this.blockSize = Math.min((maxWidth - 1) / circuitWidth, (maxHeight - 1) / circuitHeight);
+    	this.interspacing = Math.min((maxWidth - 1) / circuitWidth, (maxHeight - 1) / circuitHeight);
     
-    	int width = circuitWidth * this.blockSize+2;
-    	int height = circuitHeight * this.blockSize+2;
+    	int width = circuitWidth * this.interspacing+2;
+    	int height = circuitHeight * this.interspacing+2;
     	
     	this.left = (maxWidth - width) / 2;
     	this.top = (maxHeight - height) / 2;
     	
-    	this.right = this.left + this.blockSize * circuitWidth;
-    	this.bottom = this.top + this.blockSize * circuitHeight;
+    	this.right = this.left + this.interspacing * circuitWidth;
+    	this.bottom = this.top + this.interspacing * circuitHeight;
     }
     
     private void drawGrid(Graphics g) {
@@ -208,7 +208,7 @@ public class RoutePanel extends JPanel {
     }
     
     //let's just deactivate mouseComponent for a while, since it doesn't work and isn't high-priority
-    /*
+    
     private void drawBlockInformation(Graphics g) {
     	final MouseLabelComponent mouseLabel = new MouseLabelComponent(this);
         //add component to panel
@@ -235,37 +235,26 @@ public class RoutePanel extends JPanel {
   		}
   			
   		protected void paintComponent(Graphics g){
-  			this.drawBlockCoordinate(this.x, this.y, g);
+  			this.drawWireCoordinate(this.x, this.y, g);
   		}
   		
-  		public void drawBlockCoordinate(int x, int y, Graphics g){
-  	    	int coorX = (int)(x-this.panel.left)/this.panel.blockSize;
-  	    	int coorY = (int)(y-this.panel.top)/this.panel.blockSize;
+  		public void drawWireCoordinate(int x, int y, Graphics g){
+  			int xlength = this.panel.right - this.panel.left;
+  			int ylength = this.panel.top - this.panel.bottom;
+  	    	int coorX = (int)(x-this.panel.left)*this.panel.circuitWidth/xlength;
+  	    	int coorY = (int)(y-this.panel.top)*this.panel.circuitHeight/ylength;
   	    	if(this.onScreen(coorX, coorY)){
   	    		String s = "[" + coorX + "," + coorY + "]";
-  	    		GlobalBlock globalBlock = this.getGlobalBlock(coorX, coorY);
-  	    		if(globalBlock != null){
-  	    			s += " " + globalBlock.getName();
-  	    		}
   	        	int fontSize = 20;
   	      		g.setFont(new Font("TimesRoman", Font.BOLD, fontSize));
   	    		g.setColor(Color.BLUE);
   	    		g.drawString(s, x, y);
   	    	}
   	    }
-  	  	public GlobalBlock getGlobalBlock(int x, int y){
-  	        for(Map.Entry<GlobalBlock, Coordinate> blockEntry : this.panel.placement.blocks()) {
-  	        	Coordinate blockCoor = blockEntry.getValue();
-  	        	
-  	        	if(Math.abs(blockCoor.getX() - x) < 0.25 && Math.abs(blockCoor.getY() - y) < 0.25){
-  	        		return blockEntry.getKey();
-  	        	}
-  	        }
-  	        return null;      
-  	    }
+
   	    public boolean onScreen(int x, int y){
-  	    	return (x > 0 && y > 0 && x < this.panel.placement.getWidth()+2 && y < this.panel.placement.getHeight()+2);
+  	    	return (x > 0 && y > 0 && x < this.panel.routing.getWidth()+2 && y < this.panel.routing.getHeight()+2);
   	    }
   	}
-  	*/
+  	
 }
