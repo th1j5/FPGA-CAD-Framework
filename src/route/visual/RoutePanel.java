@@ -168,12 +168,12 @@ public class RoutePanel extends JPanel {
     			congestionColour = new Color(0,0,0,0);
     		} else {
     			// factor should be mapped to 0..255 (low congestion..high congestion)
-    			int colourRedFactor = (int)Math.floor((congestion-1)/(maxCongestion-1)*255);
-        		congestionColour = new Color(colourRedFactor, 255-colourRedFactor, 50);
+    			int colourRedFactor = (int)Math.floor((congestion-1)*205/(maxCongestion-1));
+        		congestionColour = new Color(25+colourRedFactor, 230-colourRedFactor, 50);
     		}
     	// if maxCongestion is 1, would get division by 0, just use green.
     	} else {
-    		congestionColour = new Color(0,255,50);
+    		congestionColour = new Color(25,230,50);
     	}
     	
     	g.setColor(congestionColour);
