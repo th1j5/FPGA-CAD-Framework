@@ -1,9 +1,7 @@
 package route.visual;
 
 import route.circuit.Circuit;
-import route.circuit.block.GlobalBlock;
 import route.main.Logger;
-import route.circuit.resource.RouteNode;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -14,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -60,15 +57,11 @@ public class RouteVisualiser {
     		this.routings.add(new Routing(iteration, this.circuit, wires, maxCongestion));
     	}
     }
-    
-    //public void with Map<GlobalBlock>
 
     public void createAndDrawGUI() {
         if(!this.enabled) {
             return;
         }
-        
-        //this.addRouting(100); //TODO: this is placeholder, probably add internal iteration counter to addRouting
         
         this.frame = new JFrame("Routing visualiser");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,8 +119,6 @@ public class RouteVisualiser {
     private void drawRouting(int index) {
     	this.currentRouting = index;
     	
-    	Routing routing = this.routings.get(index);
-    	
     	this.routingLabel.setText("Iteration ".concat(Integer.toString(index)));
     	this.routePanel.setRouting(this.routings.get(index));
     }
@@ -153,11 +144,6 @@ public class RouteVisualiser {
     	this.drawRouting(this.currentRouting);
     }
     
-    void drawPlot(boolean plotEnabled) {
-    	this.routePanel.setPlotEnabled(plotEnabled); //plotEnabled, this.bbCost);
-    	this.drawRouting(this.currentRouting);
-    }
-    
     private class MouseActionListener implements ActionListener {
     	private RouteVisualiser visualiser;
     	private boolean mouseEnabled;
@@ -172,22 +158,6 @@ public class RouteVisualiser {
     		this.mouseEnabled = !this.mouseEnabled;
     		this.visualiser.drawMouseInfo(this.mouseEnabled);
     	}    	
-    }
-    
-    private class PlotActionListener implements ActionListener {
-    	private RouteVisualiser visualiser;
-    	private boolean plotEnabled;
-    	
-    	PlotActionListener(RouteVisualiser visualiser) {
-    		this.visualiser = visualiser;
-    		this.plotEnabled = false;
-    	}
-    	
-    	@Override
-    	public void actionPerformed(ActionEvent e) {
-    		this.plotEnabled = !this.plotEnabled;
-    		this.visualiser.drawPlot(this.plotEnabled);
-    	}
     }
     
     private class NavigateActionListener implements ActionListener {

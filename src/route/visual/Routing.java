@@ -1,27 +1,18 @@
 package route.visual;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.List;
 
 import route.circuit.Circuit;
-import route.circuit.block.GlobalBlock;
-import route.circuit.resource.RouteNode;
 
 class Routing {
 	
-	private String name; //really needed?
 	private int iteration;
 	private Circuit circuit;
 	private List<Wire> wires;
 	private int maxCongestion;
-	//private int numWires;
 	
 	Routing(int iteration, Circuit circuit) {
 		this.initialiseData(iteration, circuit);
-		
-		//do some stuff
 	}
 	
 	Routing(int iteration, Circuit circuit, List<Wire> wires, int maxCongestion) {
@@ -30,10 +21,7 @@ class Routing {
 		this.maxCongestion = maxCongestion;
 	}
 	
-	//some other constructors
-	
 	private void initialiseData(int iteration, Circuit circuit) {
-		this.name = circuit.getName();
 		this.iteration = iteration;
 		this.circuit = circuit;
 	}
