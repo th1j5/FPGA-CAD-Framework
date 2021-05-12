@@ -15,10 +15,12 @@ import route.circuit.resource.Opin;
 import route.circuit.resource.ResourceGraph;
 import route.circuit.resource.RouteNode;
 import route.circuit.resource.RouteNodeType;
+import route.visual.RouteVisualiser;
 
 public class ConnectionRouter {
 	final ResourceGraph rrg;
 	final Circuit circuit;
+	protected RouteVisualiser visualiser;
 	
 	private float pres_fac;					// set how much overuse gets punished
 	private final float initial_pres_fac = 1f;
@@ -58,8 +60,8 @@ public class ConnectionRouter {
 
 	// Bounding Box adjustments
 	// CongestionLookAheadMethod - Different modes of congestion lookahead - NONE is obtained by CONG_LA_W/BB both to false
-	public static final CongLAMethod CONG_LA_METHOD = CongLAMethod.HOTSPOT_DETECTION; // CONGESTION_LOOK_AHEAD_METHOD
 	public static enum CongLAMethod {GROW_WHEN_CONGESTED, CLOSE_TO_BORDER_GROW, CLOSE_TO_BORDER_DELTA, GRID_DETECTION, HOTSPOT_DETECTION, HOTSPOT_OR_GROW, HOTSPOT_AND_CLOSE_GROW, HOTSPOT_AND_CLOSE_DELTA};
+	public static final CongLAMethod CONG_LA_METHOD = CongLAMethod.HOTSPOT_DETECTION; // CONGESTION_LOOK_AHEAD_METHOD
 	
 	// if (GROW_WHEN_CONGESTED) OR if(CLOSE_TO_BORDER_GROW):
 	private final short BB_GROWTH = 2;
@@ -73,9 +75,10 @@ public class ConnectionRouter {
 
 	public static final boolean DEBUG = true;
 	
-	public ConnectionRouter(ResourceGraph rrg, Circuit circuit) {
+	public ConnectionRouter(ResourceGraph rrg, Circuit circuit, RouteVisualiser visualiser) {
 		this.rrg = rrg;
 		this.circuit = circuit;
+		this.visualiser = visualiser;
 
 		this.nodesTouched = new ArrayList<>();
 		
@@ -460,6 +463,10 @@ public class ConnectionRouter {
 			int wireLength = this.rrg.occupiedTotalWireLength();
 			
 			this.rrg.logCongestionHeatMap(itry);
+			
+			if (this.visualiser.isOn()) {
+				this.rrg.addRoutingToVisualiser(itry, this.visualiser);
+			}
 			
 			this.routeTimers.calculateStatistics.finish();
 			

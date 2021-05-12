@@ -93,7 +93,7 @@ public class Main {
 		
 		System.gc();
 		
-		ConnectionRouter connectionRouter = new ConnectionRouter(this.circuit.getResourceGraph(), this.circuit);
+		ConnectionRouter connectionRouter = new ConnectionRouter(this.circuit.getResourceGraph(), this.circuit, this.visualiser);
 		int timeMilliseconds = connectionRouter.route();
 		
 		System.out.printf("Routing took %.2fs\n", (timeMilliseconds * Math.pow(10, -3)));

@@ -14,7 +14,9 @@ class Routing {
 	private String name; //really needed?
 	private int iteration;
 	private Circuit circuit;
-	private int numWires;
+	private List<Wire> wires;
+	private int maxCongestion;
+	//private int numWires;
 	
 	Routing(int iteration, Circuit circuit) {
 		this.initialiseData(iteration, circuit);
@@ -22,8 +24,10 @@ class Routing {
 		//do some stuff
 	}
 	
-	Routing(int iteration, Circuit circuit, List<RouteNode> routeNodeList) {
+	Routing(int iteration, Circuit circuit, List<Wire> wires, int maxCongestion) {
 		this.initialiseData(iteration, circuit);
+		this.wires = wires;
+		this.maxCongestion = maxCongestion;
 	}
 	
 	//some other constructors
@@ -32,15 +36,19 @@ class Routing {
 		this.name = circuit.getName();
 		this.iteration = iteration;
 		this.circuit = circuit;
-		//numblocks?
-		//blocks?
 	}
 	
 	public int getIteration() {
 		return this.iteration;
 	}
 	
-	//get numblocks?
+	public int getMaxCongestion() {
+		return this.maxCongestion;
+	}
+
+	public List<Wire> getWires() {
+		return this.wires;
+	}
 	
 	public int getWidth() {
 		return this.circuit.getWidth();

@@ -33,11 +33,13 @@ public class RoutePanel extends JPanel {
     
     private transient Routing routing;
     
+    
     private int blockSize;
+    private int circuitWidth;
+    private int circuitHeight;
     private int left, top, right, bottom;
     
     private boolean mouseEnabled = false, plotEnabled = false;
-    //bbCost?
     
     RoutePanel(Logger logger) {
     	this.logger = logger;
@@ -45,6 +47,8 @@ public class RoutePanel extends JPanel {
     
     void setRouting(Routing routing) {
     	this.routing = routing;
+    	circuitWidth = this.routing.getWidth();
+    	circuitHeight = this.routing.getHeight();
     	
     	super.repaint();
     }
@@ -65,7 +69,7 @@ public class RoutePanel extends JPanel {
     	if (this.routing != null) {
     		if (!this.plotEnabled) {
     			this.setDimensions();
-    			this.drawGrid(g);
+    			//this.drawGrid(g); //too distracting
     			this.drawWires(g);
     			//if (this.mouseEnabled)this.drawBlockInformation(g);
     		} else {
@@ -86,6 +90,12 @@ public class RoutePanel extends JPanel {
     	
     	//double maxbbcost = 0.0; for (double bbCost:this.bbCost){maxbbcost = Math.max(bbCost, maxbbcost);}
     	
+    	g.setColor(Color.BLACK);
+    	FontMetrics metrics = g.getFontMetrics();
+    	this.drawLine(g, left, bottom+1, right + metrics.getHeight()/2, bottom+1);
+    	this.drawLine(g, left, bottom, right + metrics.getHeight()/2, bottom);
+    	this.drawLine(g, left-1, top - metrics.getHeight()/2, left-1, bottom);
+    	this.drawLine(g, left, top - metrics.getHeight()/2, left, bottom);
     	
     }
     
@@ -143,13 +153,40 @@ public class RoutePanel extends JPanel {
     }
     
     private void drawWires(Graphics g) {
-    	//for (Map.Entry<Wires, Coordinates> wireEntry : this.routing.wires()) {
-    		//this.drawWire(wireEntry.getKey(), wireEntry.getValue(), g);
-    	//}
+    	for (Wire wireEntry : this.routing.getWires()) {
+    		this.drawWire(wireEntry, g, routing.getMaxCongestion());
+    	}
+    	this.drawString(g, String.format("Max congestion: %d", routing.getMaxCongestion()), this.right, this.top);
     }
     
-    private void drawWire(RouteNode wire, Graphics g) {
-    	//do the goddamn drawing you know
+    private void drawWire(Wire wire, Graphics g, int maxCongestion) {
+    	int congestion = wire.getOccupation();
+    	
+    	Color congestionColour;
+    	if (maxCongestion > 1) {
+    		// sometimes happens that a wire of usage 0 slips in somehow, draw invisible wire
+    		if (congestion == 0) {
+    			congestionColour = new Color(0,0,0,0);
+    		} else {
+    			// factor should be mapped to 0..255 (low congestion..high congestion)
+    			int colourRedFactor = (int)Math.floor((congestion-1)*205/(maxCongestion-1));
+        		congestionColour = new Color(25+colourRedFactor, 230-colourRedFactor, 50);
+    		}
+    	// if maxCongestion is 1, would get division by 0, just use green.
+    	} else {
+    		congestionColour = new Color(25,230,50);
+    	}
+    	
+    	g.setColor(congestionColour);
+    	
+    	int xlength = this.right - this.left;
+    	int ylength = this.top - this.bottom;
+    	double x1 = this.left + wire.getX1()*xlength/this.circuitWidth;
+    	double x2 = this.left + wire.getX2()*xlength/this.circuitWidth;
+    	double y1 = this.bottom + wire.getY1()*ylength/this.circuitHeight;
+    	double y2 = this.bottom + wire.getY2()*ylength/this.circuitHeight;
+
+    	this.drawLine(g, x1, y1, x2, y2);
     }
     
     //let's just deactivate mouseComponent for a while, since it doesn't work and isn't high-priority

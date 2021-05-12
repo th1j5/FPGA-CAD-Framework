@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import route.main.Logger;
 import route.main.Logger.Location;
 import route.main.Logger.Stream;
 import route.visual.RouteVisualiser;
+import route.visual.Wire;
 
 public class ResourceGraph {
 	private final Circuit circuit;
@@ -542,13 +544,21 @@ public class ResourceGraph {
 	}
 	
 	public void addRoutingToVisualiser(int iteration, RouteVisualiser visualiser) {
-		List<RouteNode> wires = new ArrayList<>();
+		List<Wire> wires = new ArrayList<>();
+		int maxCongestion = 0;
 		for (RouteNode routeNode : this.routeNodes) {
 			if (routeNode.isWire && routeNode.used()) {
-				wires.add(routeNode);
+				int occupation = routeNode.routeNodeData.occupation;
+				if (occupation > maxCongestion) {
+					maxCongestion = occupation;
+				}
+				Wire wire = new Wire(routeNode.xlow,routeNode.xhigh,routeNode.ylow,routeNode.yhigh,routeNode.routeNodeData.occupation);
+				wires.add(wire);
 			}
 		}
-		visualiser.addRouting(iteration, wires);
+		//we need to sort the wires, such that the lower congested ones are on the bottom, in order to draw higher congestion later
+		Collections.sort(wires);
+		visualiser.addRouting(iteration, wires, maxCongestion);
 	}
 	
 	public int wireSegmentsUsed() {

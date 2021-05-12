@@ -39,6 +39,10 @@ public class RouteVisualiser {
     public RouteVisualiser(Logger logger) {
         this.logger = logger;
     }
+    
+    public boolean isOn() {
+    	return this.enabled;
+    }
 
     public void setCircuit(Circuit circuit) {
         this.enabled = true;
@@ -51,9 +55,9 @@ public class RouteVisualiser {
     	}
     }
     
-    public void addRouting(int iteration, List<RouteNode> routeNodeList) {
+    public void addRouting(int iteration, List<Wire> wires, int maxCongestion) {
     	if (this.enabled) {
-    		this.routings.add(new Routing(iteration, this.circuit, routeNodeList));
+    		this.routings.add(new Routing(iteration, this.circuit, wires, maxCongestion));
     	}
     }
     
@@ -64,7 +68,7 @@ public class RouteVisualiser {
             return;
         }
         
-        this.addRouting(100); //TODO: this is placeholder, probably add internal iteration counter to addRouting
+        //this.addRouting(100); //TODO: this is placeholder, probably add internal iteration counter to addRouting
         
         this.frame = new JFrame("Routing visualiser");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,11 +129,23 @@ public class RouteVisualiser {
     	Routing routing = this.routings.get(index);
     	
     	this.routingLabel.setText("Iteration ".concat(Integer.toString(index)));
-    	this.routePanel.setRouting(routing); //if not work, routing -> this.placements.get(index) 
+    	this.routePanel.setRouting(this.routings.get(index));
     }
     
     void navigate(int type, int step) {
-    	//navigate and draw
+    	int numRoutings = this.routings.size();
+    	int currentIndex = this.currentRouting;
+    	
+    	this.drawRouting(this.addStep(currentIndex, step, numRoutings));
+    }
+    
+    // calculate what iteration to show after x steps (loops back)
+    int addStep(int currentIndex, int step, int numRoutings) {
+    	int newIndex = (currentIndex + step) % numRoutings;
+    	if (newIndex < 0) {
+    		newIndex += numRoutings;
+    	}
+    	return newIndex;
     }
     
     void drawMouseInfo(boolean mouseEnabled) {
