@@ -544,7 +544,6 @@ public class ResourceGraph {
 	}
 	
 	public void addRoutingToVisualiser(int iteration, RouteVisualiser visualiser) {
-		//TEST if visualiser is on!
 		List<Wire> wires = new ArrayList<>();
 		int maxCongestion = 0;
 		for (RouteNode routeNode : this.routeNodes) {

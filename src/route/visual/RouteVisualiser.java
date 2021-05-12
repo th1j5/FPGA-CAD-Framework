@@ -39,6 +39,10 @@ public class RouteVisualiser {
     public RouteVisualiser(Logger logger) {
         this.logger = logger;
     }
+    
+    public boolean isOn() {
+    	return this.enabled;
+    }
 
     public void setCircuit(Circuit circuit) {
         this.enabled = true;

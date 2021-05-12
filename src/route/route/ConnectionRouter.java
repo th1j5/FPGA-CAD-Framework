@@ -378,7 +378,9 @@ public class ConnectionRouter {
 			
 			this.rrg.logCongestionHeatMap(itry);
 			
-			this.rrg.addRoutingToVisualiser(itry, this.visualiser);
+			if (this.visualiser.isOn()) {
+				this.rrg.addRoutingToVisualiser(itry, this.visualiser);
+			}
 			
 			this.routeTimers.calculateStatistics.finish();
 			
