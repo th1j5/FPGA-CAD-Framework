@@ -156,6 +156,7 @@ public class RoutePanel extends JPanel {
     	for (Wire wireEntry : this.routing.getWires()) {
     		this.drawWire(wireEntry, g, routing.getMaxCongestion());
     	}
+    	this.drawString(g, String.format("Max congestion: %d", routing.getMaxCongestion()), this.right, this.top);
     }
     
     private void drawWire(Wire wire, Graphics g, int maxCongestion) {
