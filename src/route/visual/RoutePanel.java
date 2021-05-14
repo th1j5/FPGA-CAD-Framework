@@ -1,17 +1,15 @@
 package route.visual;
 
-import route.circuit.architecture.BlockCategory;
-import route.circuit.block.GlobalBlock;
 import route.main.Logger;
-import route.circuit.resource.RouteNode;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -23,23 +21,16 @@ public class RoutePanel extends JPanel {
 	
 	private final Color gridColorLight = new Color(150, 150, 150);
     private final Color gridColorDark = new Color(0, 0, 0);
-    private final Color clbColor = new Color(255, 0, 0, 50);
-    private final Color macroColor = new Color(100, 0, 0, 50);
-    private final Color ioColor = new Color(255, 255, 0, 50);
-    private final Color dspColor = new Color(0, 255, 0, 50);
-    private final Color m9kColor = new Color(0, 0, 255, 50);
-    private final Color m144kColor = new Color(0, 255, 255, 50);
-    private final Color hardBlockColor = new Color(0, 0, 0, 50);
     
     private transient Routing routing;
     
     
-    private int blockSize;
+    private int interspacing;
     private int circuitWidth;
     private int circuitHeight;
     private int left, top, right, bottom;
     
-    private boolean mouseEnabled = false, plotEnabled = false;
+    private boolean mouseEnabled = false;
     
     RoutePanel(Logger logger) {
     	this.logger = logger;
@@ -57,50 +48,29 @@ public class RoutePanel extends JPanel {
     	this.mouseEnabled = mouseEnabled;
     }
     
-    void setPlotEnabled(boolean plotEnabled) { //plotEnabled, double[] bbCost) {
-    	this.plotEnabled = plotEnabled;
-    	//this.bbCost = bbCost;
-    }
-    
     @Override
     public void paintComponent(Graphics g) {
     	super.paintComponent(g);
     	
     	if (this.routing != null) {
-    		if (!this.plotEnabled) {
-    			this.setDimensions();
-    			//this.drawGrid(g); //too distracting
-    			this.drawWires(g);
-    			//if (this.mouseEnabled)this.drawBlockInformation(g);
-    		} else {
-    			this.drawPlot(g);
-    		}
+			this.setDimensions();
+			this.drawGrid(g); //too distracting
+			this.drawWires(g);
+			if (this.mouseEnabled)this.drawBlockInformation(g);
     	}
-    }
-    
-    private void drawPlot(Graphics g) {
-    	int iteration = this.routing.getIteration();
-    	
-    	//set boundaries of plot
-    	double alpha = 0.2;
-    	double left = this.getWidth() * alpha;
-    	double top = this.getHeight() * alpha;
-    	double right = this.getWidth() * (1-alpha);
-    	double bottom = this.getHeight() * (1-alpha);
-    	
-    	//double maxbbcost = 0.0; for (double bbCost:this.bbCost){maxbbcost = Math.max(bbCost, maxbbcost);}
-    	
-    	g.setColor(Color.BLACK);
-    	FontMetrics metrics = g.getFontMetrics();
-    	this.drawLine(g, left, bottom+1, right + metrics.getHeight()/2, bottom+1);
-    	this.drawLine(g, left, bottom, right + metrics.getHeight()/2, bottom);
-    	this.drawLine(g, left-1, top - metrics.getHeight()/2, left-1, bottom);
-    	this.drawLine(g, left, top - metrics.getHeight()/2, left, bottom);
-    	
     }
     
     private void drawLine(Graphics g, double x1, double y1, double x2, double y2) {
     	g.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+    }
+    
+    private void drawThickLine(Graphics g, double x1, double y1, double x2, double y2) {
+    	Graphics2D g2d = (Graphics2D) g;
+    	Stroke defaultstroke;
+    	defaultstroke = g2d.getStroke();
+    	g2d.setStroke(new BasicStroke(6.0F));
+    	g2d.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+    	g2d.setStroke(defaultstroke);
     }
     
     private void drawString(Graphics g, String s, double x, double y){
@@ -111,43 +81,48 @@ public class RoutePanel extends JPanel {
     	int maxWidth = this.getWidth();
     	int maxHeight = this.getHeight();
     	
-    	int circuitWidth = this.routing.getWidth() + 2;
-    	int circuitHeight = this.routing.getHeight() +2;
+    	int circuitWidth = this.routing.getWidth() + 1;
+    	int circuitHeight = this.routing.getHeight() + 1;
     	
-    	this.blockSize = Math.min((maxWidth - 1) / circuitWidth, (maxHeight - 1) / circuitHeight);
+    	this.interspacing = Math.min((maxWidth - 1) / circuitWidth, (maxHeight - 1) / circuitHeight);
     
-    	int width = circuitWidth * this.blockSize + 1;
-    	int height = circuitHeight * this.blockSize + 1;
+    	int width = circuitWidth * this.interspacing+2;
+    	int height = circuitHeight * this.interspacing+2;
     	
     	this.left = (maxWidth - width) / 2;
     	this.top = (maxHeight - height) / 2;
     	
-    	this.right = this.left + this.blockSize * circuitWidth;
-    	this.bottom = this.top + this.blockSize * circuitHeight;
+    	this.right = this.left + this.interspacing * circuitWidth;
+    	this.bottom = this.top + this.interspacing * circuitHeight;
     }
     
     private void drawGrid(Graphics g) {
     	g.setColor(this.gridColorLight);
-    	for (int x = this.left; x <= this.right; x += this.blockSize) {
-    		if (x == this.left || x == this.right) {
-    			g.drawLine(x, this.top + this.blockSize, x, this.bottom - this.blockSize);
-    		} else if ((x-this.left)/this.blockSize % 10 == 1) {
+    	
+    	int xlength = this.right - this.left;
+    	
+    	for (int x = 0; x <= this.circuitWidth; x += 1) {
+    		if (x == 0 || x == this.circuitWidth) {
+    			g.drawLine(this.left+x*xlength/this.circuitWidth, this.top + xlength/this.circuitWidth, this.left+x*xlength/this.circuitWidth, this.bottom - xlength/this.circuitWidth);
+    		} else if (x % 10 == 1) {
     			g.setColor(this.gridColorDark);
-    			g.drawLine(x, this.top, x, this.bottom);
+    			g.drawLine(this.left+x*xlength/this.circuitWidth, this.top, this.left+x*xlength/this.circuitWidth, this.bottom);
     			g.setColor(this.gridColorLight);
     		} else {
-    			g.drawLine(x, this.top, x, this.bottom);
+    			g.drawLine(this.left+x*xlength/this.circuitWidth, this.top, this.left+x*xlength/this.circuitWidth, this.bottom);
     		}	
     	}
-    	for (int y = this.top; y <= this.bottom; y += this.blockSize) {
-    		if (y == this.top || y == this.bottom) {
-    			g.drawLine(this.left + this.blockSize, y, this.right - this.blockSize, y);
-    		} else if ((y-this.top)/this.blockSize % 10 == 1) {
+    	
+    	int ylength = this.top - this.bottom;
+    	for (int y = 0; y <= this.circuitHeight; y += 1) {
+    		if (y == 0 || y == this.circuitHeight) {
+    			g.drawLine(this.left - ylength/this.circuitHeight, this.bottom+y*ylength/this.circuitHeight, this.right + ylength/this.circuitHeight, this.bottom+y*ylength/this.circuitHeight);
+    		} else if (y % 10 == 1) {
     			g.setColor(this.gridColorDark);
-    			g.drawLine(this.left, y, this.right, y);
+    			g.drawLine(this.left, this.bottom+y*ylength/this.circuitHeight, this.right, this.bottom+y*ylength/this.circuitHeight);
     			g.setColor(this.gridColorLight);
     		} else {
-    			g.drawLine(this.left, y, this.right, y);
+    			g.drawLine(this.left, this.bottom+y*ylength/this.circuitHeight, this.right, this.bottom+y*ylength/this.circuitHeight);
     		}
     	}
     }
@@ -156,7 +131,7 @@ public class RoutePanel extends JPanel {
     	for (Wire wireEntry : this.routing.getWires()) {
     		this.drawWire(wireEntry, g, routing.getMaxCongestion());
     	}
-    	this.drawString(g, String.format("Max congestion: %d", routing.getMaxCongestion()), this.right, this.top);
+    	this.drawString(g, String.format("Max occupancy: %d", routing.getMaxCongestion()), this.right, this.top);
     }
     
     private void drawWire(Wire wire, Graphics g, int maxCongestion) {
@@ -186,11 +161,11 @@ public class RoutePanel extends JPanel {
     	double y1 = this.bottom + wire.getY1()*ylength/this.circuitHeight;
     	double y2 = this.bottom + wire.getY2()*ylength/this.circuitHeight;
 
-    	this.drawLine(g, x1, y1, x2, y2);
+    	this.drawThickLine(g, x1, y1, x2, y2);
     }
     
     //let's just deactivate mouseComponent for a while, since it doesn't work and isn't high-priority
-    /*
+    
     private void drawBlockInformation(Graphics g) {
     	final MouseLabelComponent mouseLabel = new MouseLabelComponent(this);
         //add component to panel
@@ -217,37 +192,26 @@ public class RoutePanel extends JPanel {
   		}
   			
   		protected void paintComponent(Graphics g){
-  			this.drawBlockCoordinate(this.x, this.y, g);
+  			this.drawWireCoordinate(this.x, this.y, g);
   		}
   		
-  		public void drawBlockCoordinate(int x, int y, Graphics g){
-  	    	int coorX = (int)(x-this.panel.left)/this.panel.blockSize;
-  	    	int coorY = (int)(y-this.panel.top)/this.panel.blockSize;
+  		public void drawWireCoordinate(int x, int y, Graphics g){
+  			int xlength = this.panel.right - this.panel.left;
+  			int ylength = this.panel.top - this.panel.bottom;
+  	    	int coorX = (int)(x-this.panel.left)*this.panel.circuitWidth/xlength;
+  	    	int coorY = (int)(y-this.panel.top)*this.panel.circuitHeight/ylength;
   	    	if(this.onScreen(coorX, coorY)){
   	    		String s = "[" + coorX + "," + coorY + "]";
-  	    		GlobalBlock globalBlock = this.getGlobalBlock(coorX, coorY);
-  	    		if(globalBlock != null){
-  	    			s += " " + globalBlock.getName();
-  	    		}
   	        	int fontSize = 20;
   	      		g.setFont(new Font("TimesRoman", Font.BOLD, fontSize));
   	    		g.setColor(Color.BLUE);
   	    		g.drawString(s, x, y);
   	    	}
   	    }
-  	  	public GlobalBlock getGlobalBlock(int x, int y){
-  	        for(Map.Entry<GlobalBlock, Coordinate> blockEntry : this.panel.placement.blocks()) {
-  	        	Coordinate blockCoor = blockEntry.getValue();
-  	        	
-  	        	if(Math.abs(blockCoor.getX() - x) < 0.25 && Math.abs(blockCoor.getY() - y) < 0.25){
-  	        		return blockEntry.getKey();
-  	        	}
-  	        }
-  	        return null;      
-  	    }
+
   	    public boolean onScreen(int x, int y){
-  	    	return (x > 0 && y > 0 && x < this.panel.placement.getWidth()+2 && y < this.panel.placement.getHeight()+2);
+  	    	return (x > 0 && y > 0 && x < this.panel.routing.getWidth()+2 && y < this.panel.routing.getHeight()+2);
   	    }
   	}
-  	*/
+  	
 }
